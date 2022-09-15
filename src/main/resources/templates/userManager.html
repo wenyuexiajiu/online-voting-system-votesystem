@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh" xml:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>用户管理</title>
+    <link rel="icon" href="favicon.ico" th:href="@{/main/images/favicon.ico}" type="image/ico">
+    <meta name="author" content="yinqi">
+    <link href="css/bootstrap.min.css" th:href="@{/main/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" th:href="@{/main/css/materialdesignicons.min.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/animate.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/style.min.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+
+        <!--左侧导航-->
+        <div th:replace="common/common::left_nav"></div>
+        <!--End 左侧导航-->
+
+
+        <!--头部信息-->
+
+        <!--头部信息-->
+        <header class="lyear-layout-header">
+
+            <nav class="navbar navbar-default">
+                <div class="topbar">
+
+                    <div class="topbar-left">
+                        <div class="lyear-aside-toggler">
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                        </div>
+                        <span class="navbar-page-title"> 用户信息管理 </span>
+                    </div>
+
+                    <div th:replace="common/common::top_nav"></div>
+
+                </div>
+            </nav>
+
+        </header>
+
+        <!--End 头部信息-->
+        <!--End 头部信息-->
+
+        <!--页面主要内容-->
+        <main class="lyear-layout-content">
+
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-toolbar clearfix">
+                                <form class="pull-right search-bar" method="get" action="#!" role="form">
+                                    <div class="input-group">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn btn-default btn-sm"
+                                                    onclick="window.location.reload()"><i
+                                                    class="mdi-24px mdi mdi-sync "></i></button>
+                                            <input type="hidden" name="search_field" id="search-field"
+                                                   value="title">
+                                            <button class="btn btn-default dropdown-toggle" id="search-btn"
+                                                    data-toggle="dropdown" type="button" aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                标题 <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a tabindex="-1" href="javascript:void(0)"
+                                                       data-field="title">标题</a></li>
+                                                <li><a tabindex="-1" href="javascript:void(0)"
+                                                       data-field="cat_name">栏目</a></li>
+                                            </ul>
+                                        </div>
+                                        <input type="text" class="form-control" value="" name="keyword"
+                                               placeholder="请输入名称">
+                                    </div>
+                                </form>
+                                <div class="toolbar-btn-action">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#addModal" data-useraccount="@mdo">添加
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                <label class="lyear-checkbox checkbox-primary">
+                                                    <input type="checkbox" id="check-all"><span></span>
+                                                </label>
+                                            </th>
+                                            <th>编号</th>
+                                            <th>用户头像</th>
+                                            <th>账号</th>
+                                            <th>真实姓名</th>
+                                            <th>性别</th>
+                                            <th>联系电话</th>
+                                            <th>权限</th>
+                                            <th>状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="user,userStatus:${pageInfo.getList()}">
+                                            <td>
+                                                <label class="lyear-checkbox checkbox-primary">
+                                                    <input type="checkbox" name="ids[]"
+                                                           value="1"><span></span>
+                                                </label>
+                                            </td>
+                                            <td th:text="${user.userId}">1</td>
+                                            <th><img class="img-circle img-avatar-48 m-r-6 "
+                                                     th:if="${user.userImg} ne null"
+                                                     src="images/users/avatar.jpg"
+                                                     th:src="@{'/headImg/'+${user.userImg}}"/>
+                                            </th>
+                                            <td th:text="${user.userAccount}">第01章 天涯思君不可忘</td>
+                                            <td th:text="${user.userRealName}">《倚天屠龙记》</td>
+                                            <td th:switch="${user.userSex}">
+                                                <span class="label label-primary-light" th:case="1">男士</span>
+                                                <span class="label label-pink-light" th:case="0">女士</span>
+                                                <span class="label label-default" th:case="*">保密</span>
+                                            </td>
+                                            <td th:text="${user.userTelephone}">Null</td>
+                                            <td th:switch="${user.userScale}">
+                                                <span th:case="'admin'">管理员</span>
+                                                <span th:case="'audience'">观众</span>
+                                                <span th:case="'singer'">歌唱选手</span>
+                                                <span th:case="'judges'">评委</span>
+                                                <span th:case="*" class="text-info">null</span>
+                                            </td>
+                                            <td th:switch="${user.userStatus}">
+                                                <span class="label label-primary-light" th:case="1">正常</span>
+                                                <span class="label label-warning-light" th:case="0">已冻结</span>
+                                                <span class="label label-danger-light" th:case="2">已删除</span>
+                                                <span class="label label-default" th:case="*">null</span>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                                        data-target="#editModal"
+                                                        th:data-useraccount="${user.userAccount}"
+                                                        th:data-userRealName="${user.userRealName}"
+                                                        th:data-userSex="${user.userSex}"
+                                                        th:data-userTelephone="${user.userTelephone}"
+                                                        th:data-userScale="${user.userScale}"
+                                                        th:data-userStatus="${user.userStatus}"
+                                                        th:data-userPassword="${user.userPassword}"> 编辑
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                                        data-target="#deleteModal"
+                                                        th:data-useraccount="${user.userAccount}"> 删除
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="col-md-3">
+                                    <span class="text-dark">当前第 <span th:text="${pageInfo.getPageNum()}"></span> 页  &nbsp;&nbsp;  共 <span
+                                            th:text="${pageInfo.pages}"></span>页 &nbsp;&nbsp; 总记录数为
+                                    <span th:text="${pageInfo.total}"></span>  条
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4 col-md-offset-4">
+                                        <ul class="pagination">
+                                            <li class="disabled"><span>«</span></li>
+                                            <li class="active"><a href="#1" th:href="@{/admin/userManager/1}">1</a></li>
+                                            <li><a href="#1" th:href="@{/admin/userManager/2}">2</a></li>
+                                            <li><a href="#1" th:href="@{/admin/userManager/3}">3</a></li>
+                                            <li><a href="#1" th:href="@{/admin/userManager/4}">4</a></li>
+                                            <li><a href="#1" th:href="@{/admin/userManager/5}">5</a></li>
+                                            <li class="disabled" th:href="@{/admin/userManger}"><span>...</span></li>
+                                            <li><a href="#!" th:href="@{/admin/userManager/10}">10</a></li>
+                                            <li><a href="#!" th:href="@{/admin/userManager/11}">11</a></li>
+                                            <li><a href="#!">»</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+        <!--End 页面主要内容-->
+    </div>
+    <!--编辑模态框-->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">编辑个人信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="edit-form">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="edit-userAccount">账户</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="email" id="edit-userAccount"
+                                       name="userAccount" placeholder="请输入邮箱.." readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"
+                                   for="edit-UserPassword">密码</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="password" id="edit-userPassword"
+                                       name="userPassword" placeholder="请输入密码..">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="edit-userRealName">真实姓名</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="edit-userRealName"
+                                       name="userRealName" placeholder="请输入联系方式..">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="edit-userTelephone">联系电话</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="edit-userTelephone"
+                                       name="userTelephone" placeholder="请输入真实姓名..">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">性别</label>
+                            <div class="col-md-7 example-box">
+                                <label class="lyear-radio radio-inline radio-info radio-primary">
+                                    <input type="radio" name="sex" value="1" id="man-radio"><span>男士</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-pink radio-primary">
+                                    <input type="radio" name="sex" value="0" id="woman-radio"><span>女士</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">账号状态</label>
+                            <div class="col-md-7 example-box">
+                                <label class="lyear-radio radio-inline radio-success radio-primary">
+                                    <input type="radio" name="status" value="1" id="start-radio"><span>启用</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-warning radio-primary">
+                                    <input type="radio" name="status" value="0" id="end-radio"><span>冻结</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="edit-userScale">权限</label>
+                            <div class="col-md-7">
+                                <select class="col-md-7 form-control" id="edit-userScale"
+                                        name="example-userScale">
+                                    <option value="audience">观众</option>
+                                    <option value="singer">选手</option>
+                                    <option value="judges">评委</option>
+                                    <option value="admin">管理员</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="button" class="btn btn-primary" id="edit-submit">修改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--删除模态框-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+         aria-labelledby="deleteModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">删除个人信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <h5 class="modal-content" id="deleteContent"></h5>
+                            <input type="hidden" class="form-control"
+                                   id="deleteUserId">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="button" class="btn btn-warning" id="delete-submit">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--增加模态框-->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog"
+         aria-labelledby="deleteModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addModalLabel">添加用户信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="add-form">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="add-userAccount">账户</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="email" id="add-userAccount"
+                                       name="userAccount" placeholder="请输入邮箱..">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"
+                                   for="add-userPassword">密码</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="password" id="add-userPassword"
+                                       name="userPassword" placeholder="请输入密码..">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="add-userRealName">真实姓名</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="add-userRealName"
+                                       name="userRealName" placeholder="请输入联系方式..">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="add-userTelephone">联系电话</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" id="add-userTelephone"
+                                       name="userTelephone" placeholder="请输入真实姓名..">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">性别</label>
+                            <div class="col-md-7 example-box">
+                                <label class="lyear-radio radio-inline radio-info radio-primary">
+                                    <input type="radio" class="sexRadio" name="userSex" checked
+                                           value="1"><span>男士</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-pink radio-primary">
+                                    <input type="radio" class="sexRadio" name="userSex" value="0"><span>女士</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="add-userScale">权限</label>
+                            <div class="col-md-7">
+                                <select class="col-md-7 form-control" id="add-userScale"
+                                        name="add-userScale">
+                                    <option value="audience" selected>观众</option>
+                                    <option value="singer">选手</option>
+                                    <option value="judges">评委</option>
+                                    <option value="admin">管理员</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="button" class="btn btn-primary" id="add-submit">添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js" th:src="@{/main/js/jquery.min.js}"></script>
+<script type="text/javascript" src="js/bootstrap.min.js" th:src="@{/main/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="js/perfect-scrollbar.min.js"
+        th:src="@{/main/js/perfect-scrollbar.min.js}"></script>
+<script src="js/bootstrap-notify.min.js" th:src="@{/main/js/bootstrap-notify.min.js}"></script>
+<script type="text/javascript" src="js/lightyear.js" th:src="@{/main/js/lightyear.js}"></script>
+
+<script type="text/javascript" src="js/main.min.js" th:src="@{/main/js/main.min.js}"></script>
+
+<script type="text/javascript">
+    $(() => {
+        // 消息提示示例
+        $('#example-success-notify').on('click', function () {
+            lightyear.loading('show');
+            // 假设ajax提交操作
+            setTimeout(function () {
+                lightyear.loading('hide');
+                lightyear.notify('修改成功，页面即将自动跳转~', 'success', 3000);
+            }, 1e3)
+        });
+
+        //编辑模态框回显数据
+        $('#editModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var useraccount = button.data('useraccount')
+            var userrealname = button.data('userrealname')
+            var userPassword = button.data('userpassword')
+            var usersex = button.data('usersex')
+            var usertelephone = button.data('usertelephone')
+            var userscale = button.data('userscale')
+            var userstatus = button.data('userstatus')
+            var modal = $(this)
+            modal.find('#edit-userAccount').val(useraccount)
+            modal.find('#edit-userPassword').val(userPassword)
+            modal.find('#edit-userRealName').val(userrealname)
+            modal.find('#edit-userTelephone').val(usertelephone)
+
+            //回显账号状态
+            if (userstatus === 0) {
+                modal.find('#edit-userStatus').prop("checked", true).val(0);
+            } else {
+                modal.find('#edit-userStatus').prop("checked", false).val(1);
+            }
+            if (userstatus === 1) {
+                modal.find('#start-radio').prop("checked", true).val(1);
+            } else {
+                modal.find('#end-radio').prop("checked", true).val(0);
+            }
+            //回显性别
+            if (usersex === 1) {
+                modal.find('#man-radio').prop("checked", true).val(1);
+            } else {
+                modal.find('#woman-radio').prop("checked", true).val(0);
+            }
+
+            //回显权限
+            if (userscale === "admin") {
+                modal.find('#edit-userScale').val("admin")
+            } else if (userscale === "judges") {
+                modal.find('#edit-userScale').val("judges")
+            } else if (userscale === "audience") {
+                modal.find('#edit-userScale').val("audience")
+            } else {
+                modal.find('#edit-userScale').val("singer")
+            }
+        })
+        //删除模态框回显数据
+        $('#deleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('useraccount')
+            var modal = $(this)
+            modal.find('#deleteContent').text('确认删除 [ ' + recipient + " ]")
+            modal.find('.modal-body input').val(recipient)
+        })
+
+        //新增按钮
+        $("#add-submit").click(function () {
+            let userAccount = $("#add-userAccount").val();
+            let userPassword = $("#add-userPassword").val();
+            let userRealName = $("#add-userRealName").val();
+            let userTelephone = $("#add-userTelephone").val();
+            let userSex = $("input[name=userSex]:checked").val();
+            let userScale = $("#add-userScale").val();
+            if (isRegister()) {
+                return;
+            }
+            lightyear.loading('show');
+            $.ajax({
+                url: "/audience/addAudience",
+                type: "POST",
+                data: {
+                    "userAccount": userAccount,
+                    "userPassword": userPassword,
+                    "userRealName": userRealName,
+                    "userTelephone": userTelephone,
+                    "userSex": userSex,
+                    "userScale": userScale
+                }
+                , success: function (data) {
+                    if (data.code == 200) {
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.url("/admin/userManager/1")
+                            lightyear.notify('新增成功，页面即将自动跳转~', 'success', 3000);
+                        }, 1e3)
+                    } else {
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.notify('新增失败，请稍后再试~', 'danger', 100);
+                        }, 1e3)
+                    }
+                },
+                error: function (data) {
+                    alert("系统错误。")
+                }
+            })
+        })
+
+        //校验该账号是否被注册过
+        function isRegister() {
+            let userAccount = $("#add-userAccount").val();
+            let flag = false;
+            $.ajax({
+                url: "/common/isRegister",
+                type: "post",
+                async: false,
+                cache: false,
+                data: {
+                    "email": userAccount
+                },
+                success: function (res) {
+                    if (res.code === 500) {
+                        alert(res.message);
+                        flag = true;
+                    }
+                },
+                error: function () {
+                    alert("邮箱验证失败");
+                }
+            })
+            return flag
+        }
+
+        //    修改
+        $("#edit-submit").click(function () {
+            let userAccount = $("#edit-userAccount").val();
+            let userPassword = $("#edit-userPassword").val();
+            console.log(userPassword)
+            let userRealName = $("#edit-userRealName").val();
+            let userTelephone = $("#edit-userTelephone").val();
+            let userSex = $("input[name=sex]:checked").val();
+            let userScale = $("#edit-userScale").val();
+            let userStatus = $("input[name=status]:checked").val();
+            lightyear.loading('show');
+            $.ajax({
+                url: "/admin/updateUsersInfo",
+                type: "POST",
+                data: {
+                    "userAccount": userAccount,
+                    "userPassword": userPassword,
+                    "userRealName": userRealName,
+                    "userTelephone": userTelephone,
+                    "userSex": userSex,
+                    "userScale": userScale,
+                    "userStatus": userStatus
+                }
+                , success: function (data) {
+                    if (data.code == 200) {
+                        // 假设ajax提交操作
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.url("/admin/userManager/1")
+                            lightyear.notify('修改成功，页面将自动刷新', 'success', 3000);
+                        }, 1e3)
+                    } else {
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.notify('更新数据错误，请稍后再试~', 'danger', 100);
+                        }, 1e3)
+                    }
+                },
+                error: function (data) {
+                    alert("系统错误。")
+                }
+            })
+        })
+        $("#delete-submit").click(function () {
+            let userAccount = $("#deleteUserId").val();
+            lightyear.loading('show');
+            $.ajax({
+                url: "/audience/deleteAudience/" + userAccount,
+                type: "delete",
+                success: function (data) {
+                    if (data.code == 200) {
+                        // 假设ajax提交操作
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.url("/admin/userManager/1")
+                            lightyear.notify('删除成功，页面将自动刷新', 'success', 3000);
+                        }, 1e3)
+                    } else {
+                        setTimeout(function () {
+                            lightyear.loading('hide');
+                            lightyear.notify('删除出现错误，请稍后再试~', 'danger', 100);
+                        }, 1e3)
+                    }
+                },
+                error: function (data) {
+                    alert("系统错误。")
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

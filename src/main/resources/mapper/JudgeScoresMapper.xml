@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.votesystem.mapper.JudgeScoresMapper">
+
+    <resultMap id="BaseResultMap" type="com.votesystem.domain.JudgeScores">
+        <id property="judgeScoresId" column="judge_scores_id" jdbcType="INTEGER"/>
+        <result property="judgerId" column="judger_id" jdbcType="INTEGER"/>
+        <result property="matchpkId" column="matchpk_id" jdbcType="TINYINT"/>
+        <result property="playerId" column="player_id" jdbcType="INTEGER"/>
+        <result property="judgeScoresScore" column="judge_scores_score" jdbcType="FLOAT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        judge_scores_id,judger_id,matchpk_id,
+        player_id,judge_scores_score
+    </sql>
+
+    <insert id="insertPlayerScore" parameterType="addJudgeScoresVo">
+        insert into judge_scores(judger_id, matchpk_id, player_id, judge_scores_score)
+        values (#{judgerId}, #{matchpkId}, #{playerId}, #{judgeScoresScore})
+    </insert>
+
+
+    <select id="selectPlayerJudgeScores" parameterType="addJudgeScoresVo" resultType="judgeScores">
+        SELECT judge_scores.judge_scores_score,
+               judge_scores.matchpk_id,
+               judge_scores.judger_id,
+               judge_scores.player_id,
+               judge_scores.judge_scores_id
+        FROM judge_scores
+        WHERE judge_scores.player_id = #{playerId}
+          AND judge_scores.judger_id = #{judgerId}
+          AND judge_scores.matchpk_id = #{matchpkId}
+    </select>
+</mapper>

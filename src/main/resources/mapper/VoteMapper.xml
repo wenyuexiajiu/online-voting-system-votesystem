@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.votesystem.mapper.VoteMapper">
+
+    <resultMap id="BaseResultMap" type="com.votesystem.domain.Vote">
+        <id property="voteId" column="vote_id" jdbcType="INTEGER"/>
+        <result property="playerId" column="player_id" jdbcType="INTEGER"/>
+        <result property="matchpkId" column="matchpk_id" jdbcType="TINYINT"/>
+        <result property="voteNumbers" column="vote_numbers" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="voteAudi" type="com.votesystem.domain.VoteAudi">
+        <id property="voteAudId" column="vote_aud_id" jdbcType="INTEGER"/>
+        <result property="playerId" column="player_id" jdbcType="INTEGER"/>
+        <result property="audiId" column="audi_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        vote_id,player_id,matchpk_id,
+        vote_numbers,audi_id
+    </sql>
+    <select id="selectVoteInfo" parameterType="vote" resultMap="voteAudi">
+        SELECT vote_audi.player_id,
+               vote_audi.vote_aud_id,
+               vote_audi.audi_id,
+               vote_audi.matchpk_id
+        FROM vote_audi
+                 INNER JOIN
+             vote
+             ON
+                 vote_audi.player_id = vote.player_id
+        WHERE vote.matchpk_id = #{matchpkId}
+          AND vote_audi.player_id = #{playerId}
+          AND vote_audi.audi_id = #{audiId}
+    </select>
+
+    <update id="updateVoteNum" parameterType="vote">
+        update vote
+        set vote_numbers = vote_numbers + 1
+        where player_id = #{playerId}
+          and matchpk_id = #{matchpkId}
+    </update>
+    <insert id="insertVoteAudiInfo" parameterType="vote">
+        insert into vote_audi(player_id, audi_id, matchpk_id)
+        values (#{playerId}, #{audiId}, #{matchpkId})
+    </insert>
+    <insert id="insertVoteInfo" parameterType="vote">
+        insert into vote(player_id, matchpk_id, vote_numbers)
+        values (#{playerId}, #{matchpkId}, #{voteNumbers})
+    </insert>
+    <select id="selectPlayerVoteByMatch" parameterType="vote" resultMap="BaseResultMap">
+        select *
+        from vote
+        where matchpk_id = #{matchpkId}
+    </select>
+</mapper>

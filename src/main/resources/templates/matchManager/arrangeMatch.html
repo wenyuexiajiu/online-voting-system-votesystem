@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh" xml:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>首页 </title>
+    <link rel="icon" href="favicon.ico" th:href="@{/main/images/favicon.ico}" type="image/ico">
+    <meta name="keywords" content="LightYear,光年,后台模板,后台管理系统,光年HTML模板">
+    <meta name="description" content="LightYear是一个基于Bootstrap v3.3.7的后台管理系统的HTML模板。">
+    <meta name="author" content="yinqi">
+    <link href="css/bootstrap.min.css" th:href="@{/main/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" th:href="@{/main/css/materialdesignicons.min.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/animate.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/style.min.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="lyear-layout-web">
+
+    <div class="lyear-layout-container">
+        <!--左侧导航-->
+        <div th:replace="common/common::left_nav"></div>
+        <!--End 左侧导航-->
+
+        <!--头部信息-->
+        <header class="lyear-layout-header">
+            <nav class="navbar navbar-default">
+                <div class="topbar">
+
+                    <div class="topbar-left">
+                        <div class="lyear-aside-toggler">
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                        </div>
+                        <span class="navbar-page-title"> 比赛对战匹配 </span>
+                    </div>
+
+                    <div th:replace="common/common::top_nav"></div>
+
+                </div>
+            </nav>
+
+        </header>
+        <!--End 头部信息-->
+
+        <!--页面主要内容-->
+        <main class="lyear-layout-content">
+
+            <div class="container-fluid">
+                <div class="row wrapper border-bottom white-bg page-heading">
+                    <div class="col-lg-10">
+                        <h1></h1>
+                        <ol class="breadcrumb">
+                            <li>
+                                <a th:href="@{/selectUser}">首页</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/selectMatch}">比赛管理</a>
+                            </li>
+                            <li class="active">
+                                <strong>对战匹配机制</strong>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="toolbar-btn-action">
+                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#addModal" data-useraccount="@mdo">手动匹配
+                    </button>
+
+                    <select class="btn btn-info" id="choiceMatchId" onchange="window.location=this.value">
+                        <option value="1" selected disabled hidden>请选择对战场次</option>
+                        <option value="audience" th:each="s:${matchIdList}"
+                                th:value="@{/admin/arrangeMatch(matchId=${s})}" th:text="'第 '+${s} +' 轮比赛'">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>对战编号</th>
+                            <th>选手1</th>
+                            <th>参赛作品1</th>
+                            <th>选手2</th>
+                            <th>参赛作品2</th>
+                            <th>对战状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="match,matchStatus:${matchedList}">
+                            <th scope="row" th:text="${matchStatus.index+1}">1</th>
+                            <td th:text="${match.matchId}">钦差大臣</td>
+                            <td th:text="${match.playerA}">果戈理</td>
+                            <td th:text="${match.playerMusicA}">俄国</td>
+                            <td th:text="${match.playerB}">国外名族</td>
+                            <td th:text="${match.playerMusicB}">125</td>
+                            <td th:switch="${match.matchpkStatus}">
+                                <span class="label label-success" th:case="1">正在比赛中</span>
+                                <span class="label label-primary" th:case="2">比赛暂停中</span>
+                                <span class="label label-warning" th:case="0">比赛已结束</span>
+                                <span class="label label-danger-light" th:case="*"><em>NULL</em></span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-success btn-sm" th:playerA="${match.playerA}"
+                                        th:playerB="${match.playerB}"
+                                        th:matchId="${match.matchId}"
+                                        data-loading-text="开启中..."
+                                        autocomplete="off"
+                                        onclick="startMatch(this.getAttribute('matchId'),this.getAttribute('playerA'),this.getAttribute('playerB'),1,'开启比赛')">
+                                    开始
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" th:playerA="${match.playerA}"
+                                        th:playerB="${match.playerB}"
+                                        th:matchId="${match.matchId}"
+                                        data-loading-text="开启中..."
+                                        autocomplete="off"
+                                        onclick="startMatch(this.getAttribute('matchId'),this.getAttribute('playerA'),this.getAttribute('playerB'),2,'暂停比赛')">
+                                    暂停
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                        data-target="#deleteModal"
+                                        data-useraccount="@aduedd" th:playerA="${match.playerA}"
+                                        th:playerB="${match.playerB}"
+                                        th:matchId="${match.matchId}"
+                                        data-loading-text="开启中..."
+                                        autocomplete="off"
+                                        onclick="startMatch(this.getAttribute('matchId'),this.getAttribute('playerA'),this.getAttribute('playerB'),0,'关闭比赛')">
+                                    关闭
+                                </button>
+                                <button type="button" class="btn btn-info btn-sm" th:matchId="${match.matchId}"
+                                        onclick="analyzeScore(this.getAttribute('matchId'))">统计分数
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+        <!--End 页面主要内容-->
+    </div>
+
+</div>
+<!--手动匹配模态框-->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog"
+     aria-labelledby="deleteModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addModalLabel">选手对战匹配</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="add-form">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="singer1">选手1</label>
+                        <div class="col-md-7">
+                            <select class="col-md-7 form-control" id="singer1"
+                                    name="add-userScale">
+                                <option value="audience" th:each="s:${singerList}" th:value="${s.userId}"
+                                        th:text="${s.userId}+'—'+${s.userRealName}">观众
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="singer2">选手2</label>
+                        <div class="col-md-7">
+                            <select class="col-md-7 form-control" id="singer2"
+                                    name="add-userScale">
+                                <option value="audience" th:each="s:${singerList}" th:value="${s.userId}"
+                                        th:text="${s.userId}+'—'+${s.userRealName}">观众
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="matchNumber">比赛场次</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="number" min="0" max="8" id="matchNumber"
+                                   name="matchNumber" placeholder="请输入比赛场次号.." required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">取消
+                </button>
+                <button type="button" class="btn btn-primary" id="match-submit" data-loading-text="处理中..."
+                        autocomplete="off">匹配
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js" th:src="@{/main/js/jquery.min.js}"></script>
+<script type="text/javascript" src="js/bootstrap.min.js" th:src="@{/main/js/bootstrap.min.js}"></script>
+<script src="js/bootstrap-notify.min.js" th:src="@{/main/js/bootstrap-notify.min.js}"></script>
+<script type="text/javascript" src="js/lightyear.js" th:src="@{/main/js/lightyear.js}"></script>
+<script type="text/javascript" src="js/perfect-scrollbar.min.js" th:src="@{/main/js/perfect-scrollbar.min.js}"></script>
+<script type="text/javascript" src="js/main.min.js" th:src="@{/main/js/main.min.js}"></script>
+
+<script type="text/javascript">
+    $(() => {
+        //对战匹配按钮
+        $("#match-submit").click(function () {
+            let matchNumber = $("#matchNumber").val();
+            let singerId01 = $("#singer1").val();
+            let singerId02 = $("#singer2").val();
+            if (matchNumber.length == 0) {
+                lightyear.loading('show');
+                setTimeout(function () {
+                    lightyear.notify('比赛场次号不能为空~', 'danger', 3000);
+                }, 1e3)
+                lightyear.loading('hide');
+                return;
+            }
+            if (singerId01 === singerId02) {
+                lightyear.loading('show');
+                setTimeout(function () {
+                    lightyear.notify('参赛选手不能相同', 'danger', 3000);
+                }, 1e3)
+                lightyear.loading('hide');
+                return;
+            }
+
+            // lightyear.loading('show');
+            var $btn = $(this).button('loading');
+            $.ajax({
+                url: "/admin/addMatchInfo",
+                type: "POST",
+                data: {
+                    "playerB": singerId01,
+                    "playerA": singerId02,
+                    "matchId": matchNumber,
+                }
+                , success: function (data) {
+                    setTimeout(function () {
+                        $btn.button("reset")
+                    }, 1e3 + (4 * 1e2))
+                    if (data.code == 200) {
+                        setTimeout(function () {
+                            lightyear.url("/admin/arrangeMatch")
+                            lightyear.notify('新增成功，页面即将自动跳转~', 'success', 2350);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else {
+                        setTimeout(function () {
+                            lightyear.notify('新增失败，请稍后再试~', 'danger', 100);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    }
+                },
+                error: function (data) {
+                    alert("系统错误。")
+                }
+            })
+        })
+
+        //    获取指定比赛场次的id
+        $("#choiceMatchI").change(function () {
+            let matchId = $("#choiceMatchId").val();
+            console.log(matchId)
+            $.ajax({
+                url: "/admin/arrangeMatch?matchId=" + matchId,
+                type: "POST",
+                // data: {
+                //     "matchId": matchId,
+                // },
+                success: function (data) {
+                    if (data.code == 200) {
+                        setTimeout(function () {
+                            lightyear.notify('查询成功~', 'success', 2350);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else {
+                        setTimeout(function () {
+                            lightyear.notify('查询失败，请稍后再试~', 'danger', 100);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    }
+                },
+                error: function (data) {
+                    alert("系统错误。")
+                }
+            })
+        })
+
+    })
+
+    //比赛对战状态管理
+    function startMatch(matchId, playerA, playerB, matchStatus, tips) {
+        $.ajax({
+            url: "/admin/controlMatchStatus",
+            type: "POST",
+            data: {
+                "playerB": playerB,
+                "playerA": playerA,
+                "matchId": matchId,
+                "matchpkStatus": matchStatus
+            }
+            , success: function (data) {
+                if (data.code == 200) {
+                    setTimeout(function () {
+                        lightyear.url("/admin/arrangeMatch")
+                        lightyear.notify('已' + tips + '，页面即将自动刷新~', 'success', 2000);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                } else if (data.code == 300) {
+                    //    已有比赛正在进行，无法开启其他比赛
+                    setTimeout(function () {
+                        lightyear.notify(data.message + '，暂时无法开启其他比赛~', 'danger', 2000);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                } else {
+                    setTimeout(function () {
+                        lightyear.notify(tips + '比赛失败，请稍后再试~', 'danger', 100);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                }
+            },
+            error: function (data) {
+                alert("系统错误。")
+            }
+        })
+    }
+
+    //    统计分析分数
+    function analyzeScore(matchId) {
+        lightyear.loading('show');
+        $.ajax({
+            url: "/admin/analyzeScore",
+            type: "POST",
+            data: {
+                "matchId": matchId,
+            }
+            , success: function (data) {
+                if (data.code == 200) {
+                    setTimeout(function () {
+                        lightyear.url("/admin/arrangeMatch")
+                        lightyear.notify(data.message + '，页面即将自动刷新~', 'success', 2000);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                } else if (data.code == 400) {
+                    //    已有比赛正在进行，无法开启其他比赛
+                    setTimeout(function () {
+                        lightyear.notify(data.message, 'danger', 2000);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                } else if (data.code == 500) {
+                    setTimeout(function () {
+                        lightyear.notify(data.message, 'danger', 100);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                }else{
+                    setTimeout(function () {
+                        lightyear.notify(data.message, 'danger', 100);
+                    }, 1e3)
+                    lightyear.loading('hide');
+                }
+            },
+            error: function (data) {
+                alert("系统错误。")
+            }
+        })
+    }
+</script>
+</body>
+</html>

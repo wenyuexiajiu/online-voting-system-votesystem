@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.votesystem.mapper.MatchpkMapper">
+
+
+    <resultMap id="BaseResultMap" type="matchpk">
+        <id property="id" column="id" jdbcType="TINYINT"/>
+        <result property="matchId" column="match_id" jdbcType="INTEGER"/>
+        <result property="playerA" column="player_a" jdbcType="INTEGER"/>
+        <result property="playerMusicA" column="player_music_a" jdbcType="VARCHAR"/>
+        <result property="playerB" column="player_b" jdbcType="INTEGER"/>
+        <result property="playerMusicB" column="player_music_b" jdbcType="VARCHAR"/>
+        <result property="matchpkStatus" column="matchPK_status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,match_id,player_a,
+        player_music_a,player_b,player_music_b,
+        matchPK_status
+    </sql>
+
+    <resultMap id="usersResultMap" type="com.votesystem.domain.Users">
+        <id property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userAccount" column="user_account" jdbcType="VARCHAR"/>
+        <result property="userPassword" column="user_password" jdbcType="VARCHAR"/>
+        <result property="userRealName" column="user_real_name" jdbcType="VARCHAR"/>
+        <result property="userSex" column="user_sex" jdbcType="TINYINT"/>
+        <result property="userTelephone" column="user_telephone" jdbcType="VARCHAR"/>
+        <result property="userScale" column="user_scale" jdbcType="VARCHAR"/>
+        <result property="userStatus" column="user_status" jdbcType="TINYINT"/>
+        <result property="matchpkId" column="matchPK_id" jdbcType="TINYINT"/>
+        <result property="playerPromotion" column="player_promotion" jdbcType="TINYINT"/>
+        <result property="userImg" column="user_img" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectSingerByUserScale" parameterType="users" resultMap="usersResultMap">
+
+        SELECT DISTINCT users.user_account,
+                        users.user_id,
+                        users.user_real_name,
+                        users.user_sex,
+                        users.user_telephone,
+                        users.user_scale,
+                        users.user_status,
+                        users.matchPK_id,
+                        users.player_promotion,
+                        users.user_img
+        FROM users
+        WHERE users.user_scale = #{userScale}
+    </select>
+
+    <select id="selectMatched" parameterType="matchpk" resultMap="BaseResultMap">
+        select match_id, player_a, player_music_a, player_b, player_music_b, matchPK_status
+        from matchpk
+        <where>
+            <if test="matchId !=null and matchId!=''">
+                match_id = #{matchId}
+            </if>
+        </where>
+    </select>
+</mapper>

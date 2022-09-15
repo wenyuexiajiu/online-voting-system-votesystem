@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.votesystem.mapper.ScoresMapper">
+
+    <resultMap id="BaseResultMap" type="com.votesystem.domain.Scores">
+        <id property="scoresId" column="scores_id" jdbcType="INTEGER"/>
+        <result property="playerId" column="player_id" jdbcType="INTEGER"/>
+        <result property="matchpkId" column="matchpk_id" jdbcType="TINYINT"/>
+        <result property="scoresFinal" column="scores_final" jdbcType="FLOAT"/>
+        <result property="voteId" column="vote_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        scores_id
+        ,player_id,matchpk_id,
+        scores_final,vote_id
+    </sql>
+    <select id="findFinalJudgeScore" parameterType="judgeScores" resultType="double">
+        SELECT round(AVG(judge_scores.judge_scores_score), 2)
+        FROM judge_scores
+        WHERE judge_scores.player_id = #{playerId}
+          AND judge_scores.matchpk_id = #{matchpkId}
+    </select>
+
+    <insert id="insertPlayerMatchFinalScore" parameterType="scores">
+        insert into scores(player_id, matchpk_id, scores_final, vote_id)
+        VALUES (#{playerId}, #{matchpkId}, #{scoresFinal}, #{voteId})
+    </insert>
+
+    <select id="selectFinalScoresByPlayerId" resultMap="BaseResultMap">
+        select * from scores where matchpk_id=#{matchId} and player_id in
+        <foreach collection="playerIdList" item="playerId" open="(" separator="," close=")">
+            #{playerId}
+        </foreach>
+    </select>
+
+    <select id="selectFinalScoreInfo" parameterType="integer" resultType="finalScoreInfoVO">
+        SELECT users.user_real_name as playerName,
+        users.player_music as musicName,
+        scores.scores_final as finalScore,
+        users.user_id as playerId,
+        scores.matchpk_id as matchpkId
+        FROM scores
+        INNER JOIN
+        users
+        ON
+        scores.player_id = users.user_id
+        <where>
+            <if test="matchId!=null and matchId!=''">
+                scores.matchpk_id = #{matchId}
+            </if>
+        </where>
+        ORDER BY scores.scores_final DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh" xml:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>首页 </title>
+    <link rel="icon" href="favicon.ico" th:href="@{/main/images/favicon.ico}" type="image/ico">
+    <meta name="keywords" content="LightYear,光年,后台模板,后台管理系统,光年HTML模板">
+    <meta name="description" content="LightYear是一个基于Bootstrap v3.3.7的后台管理系统的HTML模板。">
+    <meta name="author" content="yinqi">
+    <link href="css/bootstrap.min.css" th:href="@{/main/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" th:href="@{/main/css/materialdesignicons.min.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/animate.css}" rel="stylesheet">
+    <link href="css/style.min.css" th:href="@{/main/css/style.min.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <input type="hidden" id="userId" th:value="${session.usersInfo.username}">
+        <!--左侧导航-->
+        <div th:replace="common/common::left_nav"></div>
+        <!--End 左侧导航-->
+
+        <!--头部信息-->
+        <header th:fragment="top_nav" class="lyear-layout-header">
+
+            <nav class="navbar navbar-default">
+                <div class="topbar">
+
+                    <div class="topbar-left">
+                        <div class="lyear-aside-toggler">
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                            <span class="lyear-toggler-bar"></span>
+                        </div>
+                        <span class="navbar-page-title"> 投票数据展示 </span>
+                    </div>
+
+                    <div th:replace="common/common::top_nav"></div>
+
+                </div>
+            </nav>
+        </header>
+        <!--End 头部信息-->
+
+        <!--页面主要内容-->
+        <input type="hidden" id="matchIdPage" th:value="${matchId}" value="1"/>
+        <main class="lyear-layout-content">
+
+            <div class="container-fluid " style="margin-top: 125px;">
+                <div class="row">
+                    <div class="col-xs-4 col-md-offset-1">
+                        <div class="card bg-primary">
+                            <div class="card-body clearfix">
+                                <!-- <div class="col-xs-2"> <span class="img-avatar img-avatar-70 bg-translucent"><i
+                                         class="mdi mdi-account fa-1-5x"></i></span></div>-->
+                                <div class="col-xs-2 "><img
+                                        class="img-circle img-circle-70 m-r-20" id="header01"/></div>
+                                <div class="col-xs-4 col-md-offset-1">
+                                    <p class="h2 text-white m-t-0">票数</p>
+                                    <p class="h4 text-white m-b-0 fa-1-5x" id="votedNum01">XX 个</p>
+                                </div>
+                                <div class="col-xs-4 col-md-offset-1">
+                                    <p class="h2 text-white m-t-0">比例</p>
+                                    <p class="h4 text-white m-b-0 fa-1-5x" id="votePercent01">XX %</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-4 col-md-offset-2 ">
+                        <div class="card bg-success">
+                            <div class="card-body clearfix">
+                                <!--    <div class="col-xs-2"> <span class="img-avatar img-avatar-70 bg-translucent"><i
+                                            class="mdi mdi-account fa-1-5x"></i></span></div>-->
+                                <div class="col-xs-2 "><img
+                                        class="img-circle img-circle-70 m-r-20" id="header02"/></div>
+                                <div class="col-xs-4 col-md-offset-1">
+                                    <p class="h2 text-white m-t-0">票数</p>
+                                    <p class="h4 text-white m-b-0 fa-1-5x" id="votedNum02">XX 个</p>
+                                </div>
+                                <div class="col-xs-4 col-md-offset-1">
+                                    <p class="h2 text-white m-t-0">比例</p>
+                                    <p class="h4 text-white m-b-0 fa-1-5x" id="votePercent02">XX %</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-4 col-md-offset-1">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 id="headerNum01">参赛选手1</h3>
+                            </div>
+                            <!--                            <span class="h3 col-md-3">选手姓名</span>-->
+                            <div class="card-body">
+                                <div class="btn-group btn-group-justified">
+                                    <!--                                    选手1 的ID-->
+                                    <input type="hidden" id="singer01Id"/>
+                                    <!--折叠效果-->
+                                    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#realName01"
+                                       aria-expanded="false" aria-controls="collapseExample">
+                                        <span>姓名</span>
+                                    </a>
+                                    &nbsp;&nbsp;
+                                    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#sing01"
+                                       aria-expanded="false" aria-controls="collapseExample">
+                                        <span>参赛作品</span>
+                                    </a>
+                                    &nbsp;&nbsp;
+                                    <button class="btn btn-primary" data-loading-text="处理中..." autocomplete="off"
+                                            sec:authorize="hasAnyAuthority('audience','admin')"
+                                            id="btn01">
+                                        <span><i class="mdi mdi-thumb-up-outline"></i> 支持ta</span>
+                                    </button>
+                                    &nbsp;&nbsp;
+                                    <button class="btn btn-primary" data-loading-text="处理中..." autocomplete="off"
+                                            data-toggle="collapse" href="#scoreInput01"
+                                            aria-expanded="false" aria-controls="collapseExample"
+                                            id="score01" sec:authorize="hasAnyAuthority('judges','admin')">
+                                        <span><i
+                                                class="mdi mdi-pen"></i> 打分</span>
+                                    </button>
+                                </div>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="hidden" id="singer02Id"/>
+                                <div class="collapse m-t-10" id="realName01">
+                                    <div class="well">
+                                        姓名：&nbsp; <span id="name01">XXX</span>
+                                    </div>
+                                </div>
+                                <div class="collapse m-t-10" id="sing01">
+                                    <div class="well">
+                                        作品：&nbsp; <span id="singer01" style="text-align: center">XXX</span>
+                                    </div>
+                                </div>
+                                <div class="collapse m-t-10" id="scoreInput01">
+                                    <div class="well">
+                                        <form class="form-inline" method="post"
+                                              onsubmit="return false;">
+                                            <label class="sr-only" for="scoreInput01-number">邮箱</label>
+                                            <input class="form-control" type="email" id="scoreInput01-number"
+                                                   name="scoreInput02-number" placeholder="请输入分数..">
+                                            <div class="form-group">
+                                                <button class="btn btn-default" id="btn-scoreInput01-number"
+                                                        type="button">评分
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-xs-offset-0 " style="margin-left: 95px;"><span class="h1 col-md-1"><strong
+                            class="text-dark"><em>VS</em></strong></span>
+                    </div>
+                    <div class="col-xs-4 ">
+                        <div class="card col-xs-12 col-md-offset-1">
+                            <div class="card-header">
+                                <h3 id="headerNum02">参赛选手2</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="btn-group btn-group-justified">
+                                    <button class="btn btn-primary" data-toggle="collapse" href="#realName02"
+                                            aria-expanded="false" aria-controls="collapseExample"><span>姓名</span>
+                                    </button>
+                                    &nbsp;&nbsp;
+                                    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#sing02"
+                                       aria-expanded="false" aria-controls="collapseExample">
+                                        <span>参赛作品</span>
+                                    </a>
+                                    &nbsp;&nbsp;
+                                    <button class="btn btn-primary" data-loading-text="处理中..." autocomplete="off"
+                                            sec:authorize="hasAnyAuthority('audience','admin')"
+                                            id="btn02">
+                                        <span><i
+                                                class="mdi mdi-thumb-up-outline"></i> 支持ta</span>
+                                    </button>
+                                    &nbsp;&nbsp;
+                                    <button class="btn btn-primary" data-loading-text="处理中..." autocomplete="off"
+                                            data-toggle="collapse" href="#scoreInput02"
+                                            aria-expanded="false" aria-controls="collapseExample"
+                                            id="score02" sec:authorize="hasAnyAuthority('judges','admin')">
+                                        <span><i
+                                                class="mdi mdi-pen"></i> 打分</span>
+                                    </button>
+                                </div>
+                                <!--折叠效果-->
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <div class="collapse m-t-10" id="realName02">
+                                    <div class="well">
+                                        姓名：&nbsp; <span id="name02">XXX</span>
+                                    </div>
+                                </div>
+                                <div class="collapse m-t-10" id="sing02">
+                                    <div class="well">
+                                        作品：&nbsp; <span id="singer02">XXX</span>
+                                    </div>
+                                </div>
+                                <div class="collapse m-t-10" id="scoreInput02">
+                                    <div class="well">
+                                        <form class="form-inline" method="post"
+                                              onsubmit="return false;">
+                                            <label class="sr-only" for="scoreInput02-number">邮箱</label>
+                                            <input class="form-control" type="email" id="scoreInput02-number"
+                                                   name="scoreInput02-number" placeholder="请输入分数..">
+                                            <div class="form-group">
+                                                <button class="btn btn-default" id="btn-scoreInput02-number"
+                                                        type="button">评分
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!--折叠效果 End-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!--End 页面主要内容-->
+    </div>
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js" th:src="@{/main/js/jquery.min.js}"></script>
+<script type="text/javascript" src="js/bootstrap.min.js" th:src="@{/main/js/bootstrap.min.js}"></script>
+<script src="js/bootstrap-notify.min.js" th:src="@{/main/js/bootstrap-notify.min.js}"></script>
+<script type="text/javascript" src="js/lightyear.js" th:src="@{/main/js/lightyear.js}"></script>
+<script type="text/javascript" src="js/perfect-scrollbar.min.js" th:src="@{/main/js/perfect-scrollbar.min.js}"></script>
+<script type="text/javascript" src="js/main.min.js" th:src="@{/main/js/main.min.js}"></script>
+
+<script type="text/javascript">
+    $(() => {
+        // 选手2投票
+        $('#btn02').on('click', function () {
+            lightyear.loading('show');
+            var $btn = $(this).button('loading');
+            //获取比赛场次id
+            let matchId = $("#matchIdPage").val();
+
+            //获取选手id
+            let singerId = $("#singer02Id").val()
+            //对手的id
+            let playerOtherId = $("#singer01Id").val()
+            console.log("playerOtherId：" + playerOtherId)
+            console.log("playerId：" + singerId)
+            //获取当前观众的用户名
+            let userId = $("#userId").val();
+
+            $.ajax({
+                url: "/vote/addVoteNum",
+                type: "Post",
+                dataType: "json",
+                data: {
+                    "username": userId,
+                    "matchpkId": matchId,
+                    "playerId": singerId,
+                    "playerOtherId": playerOtherId
+                },
+                success: function (data) {
+                    if (data.code === 200) {
+                        setTimeout(function () {
+                            lightyear.notify('投票成功~', 'success', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else if (data.code == 500) {
+                        setTimeout(function () {
+                            lightyear.notify('对不起，本场对决您只有一次投票机会~', 'warning', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else {
+                        setTimeout(function () {
+                            lightyear.notify(data.message, 'danger', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    }
+                }
+            })
+
+            setTimeout(function () {
+                $btn.button("reset")
+            }, 3e3)
+        });
+
+        // 选手1投票
+        $('#btn01').on('click', function () {
+            lightyear.loading('show');
+            var $btn = $(this).button('loading');
+            //获取比赛场次id
+            let matchId = $("#matchIdPage").val();
+
+            //获取选手id
+            let singerId = $("#singer01Id").val()
+            let playerOtherId = $("#singer02Id").val()
+            console.log("playerOtherId：" + playerOtherId)
+            //获取当前观众的用户名
+            let userId = $("#userId").val();
+
+            $.ajax({
+                url: "/vote/addVoteNum",
+                type: "Post",
+                // dataType: "json",
+                data: {
+                    "username": userId,
+                    "matchpkId": matchId,
+                    "playerId": singerId,
+                    "playerOtherId": playerOtherId
+                },
+                success: function (data) {
+                    if (data.code === 200) {
+                        setTimeout(function () {
+                            lightyear.notify('投票成功~', 'success', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else if (data.code == 500) {
+                        setTimeout(function () {
+                            lightyear.notify('对不起，本场对决您只有一次投票机会~', 'warning', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else {
+                        setTimeout(function () {
+                            lightyear.notify(data.message, 'danger', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    }
+                }
+            })
+
+            setTimeout(function () {
+                $btn.button("reset")
+            }, 3e3)
+        });
+
+        //实现自动页面数据刷新
+        let interval = setInterval(function () {
+            let matchIdPage = $("#matchIdPage").val();
+            // Push();
+            $.ajax({
+                url: "/vote/showVote",
+                type: "Post",
+                dataType: "json",
+                data: {
+                    "matchId": matchIdPage
+                },
+                success: function (data) {
+                    if (data.code == 200) {
+                        // console.log(data.data)
+                        //拿到选手1的数据
+                        let matchId = data.data.matchId;
+                        let singerNameA = data.data.singerNameA;
+                        let singerMusicA = data.data.singerMusicA;
+                        let singerAVoteTotal = data.data.votingPercentageVOA.voteTotal;
+                        let singerAVotedNum = data.data.votingPercentageVOA.votedNum;
+                        let singerAVotingPercentage = data.data.votingPercentageVOA.votingPercentage;
+                        let singerIdA = data.data.singerIdA;
+                        let header01 = data.data.userImg01;
+                        //赋值给选手1
+                        $("#name01").text(singerNameA)
+                        $("#singer01").text(singerMusicA)
+                        $("#votedNum01").text(singerAVotedNum + " 个")
+                        $("#votePercent01").text(singerAVotingPercentage + " %")
+                        $("#singer01Id").val(singerIdA)
+                        $("#headerNum01").text(singerIdA + " 号")
+                        // $("#header01").attr("src", "/headImg/" + header01);
+
+                        //拿到选手2的数据
+                        let singerNameB = data.data.singerNameB;
+                        let singerMusicB = data.data.singerMusicB;
+                        let singerBVoteTotal = data.data.votingPercentageVOB.voteTotal;
+                        let singerBVotedNum = data.data.votingPercentageVOB.votedNum;
+                        let singerBVotingPercentage = data.data.votingPercentageVOB.votingPercentage;
+                        let singerIdB = data.data.singerIdB;
+
+                        //    赋值给选手2
+                        $("#name02").text(singerNameB)
+                        $("#singer02").text(singerMusicB)
+                        $("#votedNum02").text(singerBVotedNum + " 个")
+                        $("#votePercent02").text(singerBVotingPercentage + " %")
+                        $("#singer02Id").val(singerIdB)
+                        $("#headerNum02").text(singerIdB + " 号")
+                        //
+                        // console.log("singer02Id：" + singerIdB)
+                        // console.log("singer01Id：" + singerIdA)
+                    } else if (data.code === 250) {
+                        lightyear.loading('show');
+                        setTimeout(function () {
+                            lightyear.notify(data.message, 'danger', 4000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                        clearInterval(interval)
+                    }
+                }
+            })
+        }, 50);
+
+        //    给选手1打分
+        $("#btn-scoreInput01-number").click(function () {
+            //获取比赛场次id
+            let matchpkId = $("#matchIdPage").val();
+            //获取选手id
+            let playerId = $("#singer01Id").val()
+            //    获取评委id
+            let judgerId = $("#userId").val();
+            //    获取分数
+            let judgeScoresScore = $("#scoreInput01-number").val()
+            lightyear.loading('show');
+            // console.log("matchpkId：" + matchpkId)
+            // console.log("playerId：" + playerId)
+            // console.log("judgerId：" + judgerId)
+            // console.log("judgeScoresScore：" + judgeScoresScore)
+            $.ajax({
+                url: "/judge/addJudgeScore",
+                type: "Post",
+                // dataType: "json",
+                data: {
+                    "judgeName": judgerId,
+                    "matchpkId": matchpkId,
+                    "playerId": playerId,
+                    "judgeScoresScore": judgeScoresScore
+                },
+                success: function (data) {
+                    if (data.code === 200) {
+                        setTimeout(function () {
+                            lightyear.notify(data.message + '~', 'success', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else if (data.code == 500) {
+                        setTimeout(function () {
+                            lightyear.notify(data.message, 'danger', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else {
+                        setTimeout(function () {
+                            lightyear.notify(data.message, 'danger', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    }
+                }
+            })
+        })
+
+
+        //    给选手2打分
+        $("#btn-scoreInput02-number").click(function () {
+            //获取比赛场次id
+            let matchpkId = $("#matchIdPage").val();
+            //获取选手id
+            let playerId = $("#singer02Id").val()
+            //    获取评委id
+            let judgerId = $("#userId").val();
+            //    获取分数
+            let judgeScoresScore = $("#scoreInput02-number").val()
+            lightyear.loading('show');
+            // console.log("matchpkId：" + matchpkId)
+            // console.log("playerId：" + playerId)
+            // console.log("judgerId：" + judgerId)
+            // console.log("judgeScoresScore：" + judgeScoresScore)
+            $.ajax({
+                url: "/judge/addJudgeScore",
+                type: "Post",
+                // dataType: "json",
+                data: {
+                    "judgeName": judgerId,
+                    "matchpkId": matchpkId,
+                    "playerId": playerId,
+                    "judgeScoresScore": judgeScoresScore
+                },
+                success: function (data) {
+                    if (data.code === 200) {
+                        setTimeout(function () {
+                            lightyear.notify(data.message + '~', 'success', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else if (data.code == 500) {
+                        setTimeout(function () {
+                            lightyear.notify(data.message, 'danger', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    } else {
+                        setTimeout(function () {
+                            lightyear.notify(data.message, 'danger', 3000);
+                        }, 1e3)
+                        lightyear.loading('hide');
+                    }
+                }
+            })
+        })
+
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.votesystem.mapper.UsersMapper">
+
+    <resultMap id="BaseResultMap" type="users">
+        <id property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userAccount" column="user_account" jdbcType="VARCHAR"/>
+        <result property="userPassword" column="user_password" jdbcType="VARCHAR"/>
+        <result property="userRealName" column="user_real_name" jdbcType="VARCHAR"/>
+        <result property="userSex" column="user_sex" jdbcType="TINYINT"/>
+        <result property="userTelephone" column="user_telephone" jdbcType="VARCHAR"/>
+        <result property="userScale" column="user_scale" jdbcType="VARCHAR"/>
+        <result property="userStatus" column="user_status" jdbcType="TINYINT"/>
+        <result property="matchpkId" column="matchPK_id" jdbcType="TINYINT"/>
+        <result property="playerPromotion" column="player_promotion" jdbcType="TINYINT"/>
+        <result property="playerMusic" column="player_music" jdbcType="VARCHAR"/>
+        <result property="userImg" column="user_img" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id
+        ,user_account,user_password,
+        user_real_name,user_sex,user_telephone,
+        user_scale,user_status,matchPK_id,
+        player_promotion,player_music,user_img
+    </sql>
+
+    <select id="selectUsers" resultMap="BaseResultMap" parameterType="users">
+        select
+        <include refid="Base_Column_List"></include>
+        from users
+        <trim prefixOverrides="and|or" prefix="where">
+            <if test="userId!=null and userId !=''">
+                and user_id = #{userId}
+            </if>
+
+            <if test="userAccount!=null and userAccount!=''">
+                and user_account=#{userAccount}
+            </if>
+
+            <if test="userRealName!=null and userRealName!=''">
+                and user_real_name=#{userRealName}
+            </if>
+
+        </trim>
+    </select>
+    <update id="updateUsersInfo" parameterType="users">
+        update users
+        <trim prefix="set" suffixOverrides=",">
+            <if test="userPassword!=null and userPassword!=''">
+                user_password=#{userPassword},
+            </if>
+            <if test="userRealName!=null and userRealName!=''">
+                user_real_name=#{userRealName},
+            </if>
+            <if test="userTelephone!=null and userTelephone!=''">
+                user_telephone=#{userTelephone},
+            </if>
+            <if test="userScale!=null and userScale!=''">
+                user_scale=#{userScale},
+            </if>
+            <if test="userImg!=null and userImg!=''">
+                user_img=#{userImg},
+            </if>
+            <if test="matchpkId!=null and matchpkId!=''">
+                matchPKId=#{matchpkId},
+            </if>
+            <if test="playerPromotion!=null and playerPromotion!=''">
+                player_promotion=#{playerPromotion},
+            </if>
+            user_sex=#{userSex},
+            user_status=#{userStatus},
+            user_account = #{userAccount}
+        </trim>
+        where user_account=#{userAccount}
+    </update>
+
+    <select id="selectUsersInfoByUsersAccount" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from users where user_account=#{userAccount}
+    </select>
+    <select id="selectUsersInfoByUsersAccountOrUsersScale" parameterType="users" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from users
+        <where>
+            <if test="userAccount!=null and userAccount!=''">
+                and user_account=#{userAccount}
+            </if>
+            <if test="userScale!=null and userScale!=''">
+                and user_scale=#{userScale}
+            </if>
+        </where>
+    </select>
+</mapper>
